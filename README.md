@@ -1,4 +1,4 @@
-# SudoShell
+# VOSHI - Visual Operating System Handling Interface
 
 
 Rough Notes: 
