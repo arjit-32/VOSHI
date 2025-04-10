@@ -57,9 +57,9 @@ Built-in Commands:
 | `<command>` | Execute any standard system command.            |
 
 
-*Note - If you wish to make voshi appear in your VSCode terminal options -*
-*1. Open Command Palette(Ctl+Shift+P) → Preferences: Open User Settings (JSON)
-2. Add the following snippet under your terminal profiles (adjust the path if needed):*
+*Note - If you wish to make voshi appear in your VSCode terminal options -* <br>
+*1. Open Command Palette(Ctl+Shift+P) → Preferences: Open User Settings (JSON) <br>
+2. Add the following snippet under your terminal profiles (adjust the path if needed):* <br>
 ```json
 "terminal.integrated.profiles.linux": {
   "Voshi": {
@@ -86,7 +86,7 @@ sudo apt install figlet curl jq neofetch
 - Singal Handling: A interrupt that is sent to running process by kernel, ex - CTRL+Z which generates `SIGINT`. Can make custom signal handler using `signal` function.
 
 ## 🤝 Other Info 
-- Inspired by [Indradhanush Gupta's great guide](https://igupta.in/blog/writing-a-unix-shell-part-2/)
+- Inspired by [Indradhanush Gupta's blogs](https://igupta.in/blog/writing-a-unix-shell-part-2/)
 - Feel free to open issues or submit PRs.
 - Future plans: A Playground for it to see it run in the browser.
 
