@@ -8,7 +8,7 @@ VOSHI stands for Visual Operating System Handling Interface. To sum up its
 
 ## ✨ Features
 
-✅ Aesthetic, color-coded Powerline-style prompt <br>
+✅ Aestheticand color-coded prompt <br>
 ✅ Git branch display inside the prompt <br>
 ✅ Built-in `v` dashboard shows News, System Info and Weather <br>
 ✅ Supports classic shell operations: `cd`, `exit`, external commands <br>
