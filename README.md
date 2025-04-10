@@ -17,7 +17,7 @@ VOSHI stands for Visual Operating System Handling Interface. To sum up its
 ---
 
 ## 🔗 Download
-Download the latest .deb package via []().
+Download the latest .deb package via [VOSHI website](https://arjit-32.github.io/VOSHI/).
 
 ---
 
