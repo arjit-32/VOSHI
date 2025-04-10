@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "voshi installed successfully!"
+echo "Run it by typing: voshi"

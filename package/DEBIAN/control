@@ -1,0 +1,9 @@
+Package: voshi
+Version: 1.0.0
+Section: shells
+Priority: optional
+Architecture: amd64
+Maintainer: arjitsharma50@gmail.com
+Depends: libc6, libreadline8, curl, jq, figlet, neofetch
+Description: A stylish Linux shell with dashboard, weather, and news
+ A fun, colorful shell inspired by oh-my-zsh, written in C.

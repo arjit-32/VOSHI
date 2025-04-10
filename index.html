@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOSHI - Modern Terminal Experience</title>
+    <style>
+        :root {
+            --bg: #1a1a1a;
+            --text: #f0f0f0;
+            --green: #4ade80;
+            --blue: #38bdf8;
+            --cyan: #22d3ee;
+            --red: #f87171;
+            --yellow: #facc15;
+            --magenta: #d946ef;
+            --cat-orange: #f59e0b;
+            --folder-blue: #3b82f6;
+            --branch-purple: #8b5cf6;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--green), var(--blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 2rem;
+        }
+        
+        .terminal-window {
+            background-color: #121212;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeIn 1.2s ease-out;
+            transform: perspective(1000px) rotateX(2deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .terminal-window:hover {
+            transform: perspective(1000px) rotateX(0deg) scale(1.02);
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.2);
+        }
+        
+        .terminal-header {
+            background-color: #2a2a2a;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .terminal-buttons {
+            display: flex;
+            margin-right: 1rem;
+        }
+        
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .terminal-button:nth-child(1) { background-color: #ff5f56; }
+        .terminal-button:nth-child(2) { background-color: #ffbd2e; }
+        .terminal-button:nth-child(3) { background-color: #27c93f; }
+        
+        .terminal-button:hover {
+            transform: scale(1.2);
+        }
+        
+        .terminal-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .terminal-content {
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            overflow-x: auto;
+            height: 400px;
+            overflow-y: auto;
+            background-color: #1c1c1c;
+        }
+
+        .ascii-art {
+            font-family: monospace;
+            white-space: pre;
+            line-height: 1.2;
+            font-size: 0.9rem;
+            color: var(--green);
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .prompt {
+            display: flex;
+            align-items: center;
+            margin: 0.8rem 0;
+            font-weight: bold;
+            opacity: 0;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        .prompt-bracket {
+            color: #666;
+            margin-right: 0;
+            white-space: nowrap;
+        }
+        
+        .prompt-cat {
+            color: var(--cat-orange);
+            margin-right: 0;
+            animation: bounce 2s infinite;
+        }
+        
+        .prompt-user {
+            color: var(--green);
+            margin-right: 0;
+        }
+        
+        .directory {
+            color: var(--folder-blue);
+            margin-right: 0;
+        }
+
+        .branch {
+            color: var(--branch-purple);
+            margin-right: 0;
+        }
+        
+        .command {
+            color: var(--text);
+            margin-left: 0.5rem;
+            position: relative;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background-color: var(--text);
+            margin-left: 4px;
+            vertical-align: middle;
+            animation: blink 1s infinite;
+        }
+        
+        .output-line {
+            margin: 0.2rem 0;
+            font-size: 0.9rem;
+            white-space: pre;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+            animation-delay: 0.8s;
+        }
+        
+        .green { color: var(--green); }
+        .blue { color: var(--blue); }
+        .cyan { color: var(--cyan); }
+        .red { color: var(--red); }
+        .yellow { color: var(--yellow); }
+        .magenta { color: var(--magenta); }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .feature:nth-child(1) { animation-delay: 0.2s; }
+        .feature:nth-child(2) { animation-delay: 0.4s; }
+        .feature:nth-child(3) { animation-delay: 0.6s; }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.15);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature:hover .feature-icon {
+            transform: scale(1.2);
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--cyan);
+        }
+        
+        .feature-description {
+            color: #ccc;
+        }
+        
+        .download-section {
+            text-align: center;
+            margin: 3rem 0;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            animation: fadeIn 1s ease-out;
+            animation-delay: 0.8s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            margin-top: 1rem;
+            background-color: var(--green);
+            color: #121212;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .download-btn:hover:before {
+            left: 100%;
+        }
+        
+        .download-btn:hover {
+            background-color: var(--blue);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            color: #777;
+            font-size: 0.9rem;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .divider {
+            margin: 0.5rem 0;
+            border-bottom: 1px dashed #333;
+        }
+        
+        .typing {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 0.15em solid var(--text);
+            margin: 0 auto;
+            animation: typing 3.5s steps(30, end), blink-caret 0.75s step-end infinite;
+            max-width: fit-content;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--text) }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px rgba(56, 189, 248, 0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(74, 222, 128, 0.8);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .ascii-art {
+                font-size: 0.7rem;
+            }
+            
+            .terminal-content {
+                height: 350px;
+            }
+        }
+        
+        .success { color: var(--green); }
+        .warning { color: var(--yellow); }
+        .error { color: var(--red); }
+        .info { color: var(--blue); }
+        
+        .file {
+            margin-right: 1rem;
+            display: inline-block;
+        }
+        
+        .command-list {
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="logo" style="text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);">VOSHI</h1>
+            <p class="subtitle">A modern, powerful terminal experience</p>
+        </header>
+        
+        <!-- Terminal window with extra depth -->
+        <div class="terminal-window" style="box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <div class="terminal-button"></div>
+                    <div class="terminal-button"></div>
+                    <div class="terminal-button"></div>
+                </div>
+                <div class="terminal-title">voshi — shell</div>
+            </div>
+            <div class="terminal-content">
+                <!-- ASCII Art -->
+                <div class="ascii-art">
+                      ___  _       __  __        __      __       _     _ _ 
+                    / __ \| |     |  \/  |       \ \    / /      | |   (_) |
+                   | |  | | |__   | \  / |_   _   \ \  / /__  ___| |__  _| |
+                   | |  | | '_ \  | |\/| | | | |   \ \/ / _ \/ __| '_ \| | |
+                   | |__| | | | | | |  | | |_| |    \  / (_) \__ \ | | | |_|
+                    \____/|_| |_| |_|  |_|\__, |     \/ \___/|___/_| |_|_(_)
+                </div>
+                <!-- Sample prompt -->
+                <div class="prompt" style="animation-delay: 0.3s;">
+                    <span class="prompt-bracket">[</span>
+                    <span class="prompt-cat">🐱</span>
+                    <span class="prompt-user">(user)@voshi</span>
+                    <span class="prompt-bracket">]</span>
+                    <span class="prompt-bracket"> —[</span>
+                    <span class="directory">📁 /workspace</span>
+                    <span class="prompt-bracket">]</span>
+                    <span class="prompt-bracket"> —[</span>
+                    <span class="branch">🌿 main</span>
+                    <span class="prompt-bracket">]</span>
+                </div>
+                <div class="prompt" style="animation-delay: 0.6s;">
+                    <span class="prompt-bracket">→</span>
+                    <span class="command typing-command">ls</span>
+                    <span class="cursor"></span>
+                </div>
+                <div class="output-line">README.md  test.txt  folder</div>
+                
+               
+            </div>
+        </div>
+        
+        <!-- Slimmed-down features -->
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Minimal & Fast</h3>
+                <p class="feature-description">Has minimal overhead, keeping everything fast for the 'non-power' user.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Pretty Interface</h3>
+                <p class="feature-description">Enjoy a visually pleasing terminal. Use 'v' command for dashboard.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🔍</div>
+                <h3 class="feature-title">Git Integration</h3>
+                <p class="feature-description">Stay aware of your current branch and repository status right in your prompt.</p>
+            </div>
+
+        </div>
+        
+        <div class="download-section" style="box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);">
+            <h2 style="text-shadow: 0 0 10px rgba(250, 204, 21, 0.4);">Ready to enhance your terminal experience?</h2>
+            <p>VOSHI works on Linux (for now)</p>
+            <a href="#" class="download-btn">Download VOSHI v1.0.0</a>
+        </div>
+        
+        <div class="footer">
+            <p>VOSHI Terminal © 2025 • Created with passion for better terminal experiences</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate typing animation for commands
+            setTimeout(function() {
+                document.getElementById('command-sequence').style.display = 'block';
+            }, 1500);
+            
+            // Add interactive cursor blinking
+            const cursor = document.querySelector('.cursor');
+            
+            // Add terminal interaction (optional)
+            const terminalWindow = document.querySelector('.terminal-window');
+            terminalWindow.addEventListener('click', function() {
+                cursor.style.opacity = '1';
+                setTimeout(function() {
+                    cursor.style.animation = 'blink 1s infinite';
+                }, 500);
+            });
+            
+            // Simulate typing for any command with typing-command class
+            const typingCommands = document.querySelectorAll('.typing-command');
+            typingCommands.forEach(command => {
+                const text = command.textContent;
+                command.textContent = '';
+                let i = 0;
+                
+                function typeWriter() {
+                    if (i < text.length) {
+                        command.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 100);
+                    }
+                }
+                
+                setTimeout(typeWriter, 800);
+            });
+            
+            // Add hover effects for features
+            const features = document.querySelectorAll('.feature');
+            features.forEach(feature => {
+                feature.addEventListener('mouseenter', function() {
+                    const icon = this.querySelector('.feature-icon');
+                    icon.style.transform = 'scale(1.2)';
+                });
+                
+                feature.addEventListener('mouseleave', function() {
+                    const icon = this.querySelector('.feature-icon');
+                    icon.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Add download button animation
+            const downloadBtn = document.querySelector('.download-btn');
+            downloadBtn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.3)';
+            });
+            
+            downloadBtn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            });
+            
+            // Terminal window tilting effect
+            terminalWindow.addEventListener('mousemove', function(e) {
+                const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+                const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+                this.style.transform = `perspective(1000px) rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            });
+            
+            terminalWindow.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(1000px) rotateX(2deg)';
+            });
+        });
+    </script>
+</body>
+</html>

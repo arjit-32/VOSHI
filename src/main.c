@@ -22,6 +22,8 @@
 #define PROMPT_ICON "\U0001F680 "   // 🚀
 #define COMPUTER_ICON "\U0001F4BB " // 💻
 #define BRANCH_ICON "\U0001F33F "   // 🌿
+#define CAT_ICON "\U0001F63A"   // 😺
+
 
 // Get the current Git branch (if inside a Git repo)
 char *get_git_branch() {
@@ -54,7 +56,7 @@ char *get_prompt() {
     #define BG_MAGENTA   "\033[48;5;90m"
 
     snprintf(prompt, sizeof(prompt),
-        "\n" BOLD YELLOW BG_DARKGRAY " \u256d\u2500[" RESET GREEN COMPUTER_ICON " %s@voshi " RESET BG_DARKGRAY "]"
+        "\n" BOLD YELLOW BG_DARKGRAY " \u256d\u2500[" RESET GREEN CAT_ICON " %s@voshi " RESET BG_DARKGRAY "]"
         " \u2500[" RESET BG_BLUE FOLDER_ICON " %s " RESET BG_DARKGRAY "]",
         getenv("USER"), cwd);
 
