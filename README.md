@@ -87,7 +87,8 @@ sudo apt install figlet curl jq neofetch
 
 ## 🤝 Other Info 
 - Inspired by [Indradhanush Gupta's blogs](https://igupta.in/blog/writing-a-unix-shell-part-2/)
-- Feel free to open issues or submit PRs.
+- Built this shell to better understand how operating systems work, learned a lot about processes, forking, wait(), and signal handling.
+- If you find any mistakes (which there definitely might be), feel free to open an issue. Thanks!
 - Future plans: A Playground for it to see it run in the browser.
 
 ---
