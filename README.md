@@ -1,8 +1,10 @@
 # VOSHI - A Stylish Minimal Shell
 
-> A lightweight, interactive shell with emoji-powered prompts, Git awareness, custom dashboard at your fingertips. 
+A lightweight, interactive shell with emoji-powered prompts, Git awareness, custom dashboard.
 
-###### VOSHI stands for Visual Operating System Handling Interface or something else, who knows :)
+It was built as an academic exercise to understand operating systems.
+
+> VOSHI stands for Visual Operating System Handling Interface or something else, who knows :)
 
 ---
 
